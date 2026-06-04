@@ -24,7 +24,7 @@
         <div style="flex: 1 1 400px; display: flex; flex-direction: column; justify-content: center;">
             <span style="color: #dfb76c; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; margin-bottom: 10px;">Luxury Edition</span>
             <h1 style="font-size: 42px; font-weight: bold; color: #fff; margin: 0 0 15px 0; border-bottom: 2px solid #dfb76c; padding-bottom: 15px;"><?php echo htmlspecialchars($product->name); ?></h1>
-            <div style="font-size: 28px; font-weight: bold; color: #dfb76c; margin-bottom: 20px;"><?php echo number_format((float)$product->price, 0, ',', '.'); ?> VNĐ</div>
+            <div style="font-size: 28px; font-weight: bold; color: #dfb76c; margin-bottom: 20px;">$<?php echo number_format((float)$product->price, 0, ',', '.'); ?></div>
             <p style="font-size: 16px; color: #ccc; line-height: 1.8; margin: 0 0 30px 0; min-height: 80px;"><?php echo htmlspecialchars($product->description); ?></p>
             
             <div style="display: flex; gap: 15px; align-items: stretch;">
@@ -44,7 +44,9 @@
                 <?php else: ?>
                     <a href="/NguyenDuongBao_0154/Product/addToCart/<?php echo $product->id; ?>" style="flex: 1; background: #dfb76c; color: #111; padding: 0 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; justify-content: center; text-align: center; border: 1px solid #dfb76c; min-height: 55px; box-sizing: border-box;">🛒 Mua Ngay (Thêm vào giỏ)</a>
                 <?php endif; ?>
-                <a href="/NguyenDuongBao_0154/Product/edit/<?php echo $product->id; ?>" style="flex: 1; background: transparent; color: #ccc; padding: 0 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; justify-content: center; text-align: center; border: 1px solid #444; min-height: 55px; box-sizing: border-box;">✏ Chỉnh sửa thông tin</a>
+                <?php if (SessionHelper::isAdmin()): ?>
+                    <a href="/NguyenDuongBao_0154/Product/edit/<?php echo $product->id; ?>" style="flex: 1; background: transparent; color: #ccc; padding: 0 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; justify-content: center; text-align: center; border: 1px solid #444; min-height: 55px; box-sizing: border-box;">✏ Chỉnh sửa thông tin</a>
+                <?php endif; ?>
             </div>
         </div>
     </div>

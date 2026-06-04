@@ -66,7 +66,7 @@
                                 <b style="color: #dfb76c; margin-left: 4px;">x<?php echo $item['quantity']; ?></b>
                             </span>
                             <span style="color: #fff; font-weight: bold; white-space: nowrap;">
-                                <?php echo number_format($totalPrice, 0, ',', '.'); ?> Đ
+                                $<?php echo number_format($totalPrice, 0, ',', '.'); ?>
                             </span>
                         </div>
                 <?php 
@@ -78,7 +78,7 @@
             <div style="border-top: 2px solid #dfb76c; padding-top: 20px; display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 16px; font-weight: bold; uppercase;">Tổng thanh toán:</span>
                 <span style="color: #dfb76c; font-size: 22px; font-weight: bold;">
-                    <?php echo number_format($grandTotal, 0, ',', '.'); ?> VNĐ
+                    $<?php echo number_format($grandTotal, 0, ',', '.'); ?>
                 </span>
             </div>
         </div>

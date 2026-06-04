@@ -1,22 +1,16 @@
 <?php require './app/views/shares/header.php'; ?>
 
-<header class="header">
-    <div class="logo">⌚ LUXURY WATCH</div>
-    <nav class="nav">
-        <a href="/NguyenDuongBao_0154/Product/list">Trang chủ</a>
-        <a href="/NguyenDuongBao_0154/Product/list#featured">Nổi bật</a>
-        <a href="/NguyenDuongBao_0154/Category/list" class="active" style="color: #dfb76c; font-weight: bold;">Quản lý danh mục</a>
-        <a href="/NguyenDuongBao_0154/Product/list#products">Quản lý sản phẩm</a>
-        <a href="/NguyenDuongBao_0154/Product/cart">🛒 Giỏ hàng</a>
-    </nav>
-    <a class="add-btn" href="/NguyenDuongBao_0154/Category/add" style="background-color: #dfb76c; color: #111; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">+ Thêm danh mục</a>
-</header>
 
 <section style="padding: 60px 20px; max-width: 1200px; margin: 0 auto; min-height: 700px; box-sizing: border-box;">
     
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #dfb76c; padding-bottom: 15px;">
         <h1 style="font-size: 32px; font-weight: bold; color: #fff; margin: 0;">📦 QUẢN LÝ DANH MỤC</h1>
-        <span style="color: #888; font-size: 14px;">Tổng số: <?php echo count($categories); ?> danh mục</span>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <a href="/NguyenDuongBao_0154/Product/list" style="background-color: transparent; color: #dfb76c; border: 1px solid #dfb76c; padding: 10px 18px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 14px; transition: all 0.2s ease;">
+                🔙 Quay về Trang Chủ
+            </a>
+            <span style="color: #888; font-size: 14px;">Tổng số: <?php echo count($categories); ?> danh mục</span>
+        </div>
     </div>
 
     <div style="background: #111; border: 1px solid #2d2d2d; border-radius: 12px; padding: 18px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.35);">

@@ -37,12 +37,14 @@ class ProductController
 
     public function add()
     {
+        SessionHelper::requireAdmin();
         $categories = (new CategoryModel($this->db))->getCategories();
         include_once 'app/views/product/add.php';
     }
 
     public function save()
     {
+        SessionHelper::requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $name = $_POST['name'] ?? '';
             $description = $_POST['description'] ?? '';
@@ -69,6 +71,7 @@ class ProductController
 
     public function edit($id)
     {
+        SessionHelper::requireAdmin();
         $product = $this->productModel->getProductById($id);
         $categories = (new CategoryModel($this->db))->getCategories();
         if ($product) {
@@ -80,6 +83,7 @@ class ProductController
 
     public function update()
     {
+        SessionHelper::requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'];
             $name = $_POST['name'];
@@ -105,6 +109,7 @@ class ProductController
 
     public function delete($id)
     {
+        SessionHelper::requireAdmin();
         if ($this->productModel->deleteProduct($id)) {
             header('Location: /NguyenDuongBao_0154/Product');
             exit();
@@ -144,52 +149,61 @@ class ProductController
         return $target_file;
     }
 
-   public function addToCart($id)
-{
-    $product = null;
-    if (method_exists($this->productModel, 'getProductById')) {
-        $product = $this->productModel->getProductById($id);
-    } elseif (method_exists($this->productModel, 'find')) {
-        $product = $this->productModel->find($id);
-    } elseif (method_exists($this->productModel, 'getById')) {
-        $product = $this->productModel->getById($id);
-    } else {
-        try {
-            $db = new PDO("mysql:host=localhost;dbname=NguyenDuongBao_0154;charset=utf8", "root", "");
-            $stmt = $db->prepare("SELECT * FROM products WHERE id = ?");
-            $stmt->execute([$id]);
-            $product = $stmt->fetch(PDO::FETCH_OBJ);
-        } catch (Exception $e) {
-            $product = null;
+    public function addToCart($id)
+    {
+        $product = null;
+        if (method_exists($this->productModel, 'getProductById')) {
+            $product = $this->productModel->getProductById($id);
+        } elseif (method_exists($this->productModel, 'find')) {
+            $product = $this->productModel->find($id);
+        } elseif (method_exists($this->productModel, 'getById')) {
+            $product = $this->productModel->getById($id);
+        } else {
+            try {
+                $db = new PDO("mysql:host=localhost;dbname=NguyenDuongBao_0154;charset=utf8", "root", "");
+                $stmt = $db->prepare("SELECT * FROM products WHERE id = ?");
+                $stmt->execute([$id]);
+                $product = $stmt->fetch(PDO::FETCH_OBJ);
+            } catch (Exception $e) {
+                $product = null;
+            }
         }
-    }
-    if (!$product) {
-        header('Location: /NguyenDuongBao_0154/Product/list');
+        if (!$product) {
+            header('Location: /NguyenDuongBao_0154/Product/list');
+            exit();
+        }
+        $p = is_object($product) ? $product : (object) $product;
+        if (!isset($_SESSION['cart'])) {
+            $_SESSION['cart'] = [];
+        }
+        if (isset($_SESSION['cart'][$id])) {
+            $_SESSION['cart'][$id]['quantity']++;
+        } else {
+            $_SESSION['cart'][$id] = [
+                'id' => $p->id,
+                'name' => $p->name,
+                'price' => $p->price,
+                'image' => $p->image,
+                'quantity' => 1
+            ];
+        }
+        // SỬA LẠI: Kiểm tra HTTP_REFERER chặt chẽ, loại bỏ hoàn toàn các ký tự gây hiểu nhầm cho router index.php
+        if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'NguyenDuongBao_0154') !== false) {
+            $redirectUrl = $_SERVER['HTTP_REFERER'];
+            if (strpos($redirectUrl, '#') === false) {
+                if (strpos($redirectUrl, '/Product/cart') !== false) {
+                    $redirectUrl .= '#cart';
+                } elseif (strpos($redirectUrl, '/Product/list') !== false) {
+                    $redirectUrl .= '#products';
+                }
+            }
+            header("Location: " . $redirectUrl);
+        } else {
+            header('Location: /NguyenDuongBao_0154/Product/list#products');
+        }
         exit();
     }
-    $p = is_object($product) ? $product : (object)$product;
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-    }
-    if (isset($_SESSION['cart'][$id])) {
-        $_SESSION['cart'][$id]['quantity']++;
-    } else {
-        $_SESSION['cart'][$id] = [
-            'id' => $p->id,
-            'name' => $p->name,
-            'price' => $p->price,
-            'image' => $p->image,
-            'quantity' => 1
-        ];
-    }
-    // SỬA LẠI: Kiểm tra HTTP_REFERER chặt chẽ, loại bỏ hoàn toàn các ký tự gây hiểu nhầm cho router index.php
-    if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'NguyenDuongBao_0154') !== false) {
-        header("Location: " . $_SERVER['HTTP_REFERER']);
-    } else {
-        header('Location: /NguyenDuongBao_0154/Product/list');
-    }
-    exit();
-}    public function cart()
+    public function cart()
     {
         $cart = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
         include 'app/views/product/cart.php';
@@ -197,11 +211,13 @@ class ProductController
 
     public function checkout()
     {
+        SessionHelper::requireLogin();
         include 'app/views/product/checkout.php';
     }
 
     public function processCheckout()
     {
+        SessionHelper::requireLogin();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $name = $_POST['name'];
             $phone = $_POST['phone'];
@@ -247,28 +263,78 @@ class ProductController
 
     public function orderConfirmation()
     {
+        SessionHelper::requireLogin();
         include 'app/views/product/orderConfirmation.php';
     }
 
-  public function updateCartQuantity($id, $action)
-{
-    if (isset($_SESSION['cart'][$id])) {
-        if ($action === 'increase') {
-            $_SESSION['cart'][$id]['quantity']++;
-        } elseif ($action === 'decrease') {
-            $_SESSION['cart'][$id]['quantity']--;
-            if ($_SESSION['cart'][$id]['quantity'] <= 0) {
-                unset($_SESSION['cart'][$id]);
+    public function updateCartQuantity($id, $action)
+    {
+        if (isset($_SESSION['cart'][$id])) {
+            if ($action === 'increase') {
+                $_SESSION['cart'][$id]['quantity']++;
+            } elseif ($action === 'decrease') {
+                $_SESSION['cart'][$id]['quantity']--;
+                if ($_SESSION['cart'][$id]['quantity'] <= 0) {
+                    unset($_SESSION['cart'][$id]);
+                }
             }
         }
+        // If AJAX (XHR) request, return JSON so client can update DOM without full reload
+        $isAjax = false;
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            $isAjax = true;
+        }
+
+        if ($isAjax) {
+            // prepare response data for the item and cart totals
+            $response = [
+                'success' => true,
+                'id' => $id,
+                'quantity' => isset($_SESSION['cart'][$id]) ? $_SESSION['cart'][$id]['quantity'] : 0,
+                'itemTotal' => 0,
+                'grandTotal' => 0
+            ];
+            if (isset($_SESSION['cart'][$id])) {
+                $response['itemTotal'] = $_SESSION['cart'][$id]['price'] * $_SESSION['cart'][$id]['quantity'];
+            }
+            $grand = 0;
+            if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+                foreach ($_SESSION['cart'] as $c) {
+                    $grand += $c['price'] * $c['quantity'];
+                }
+            }
+            $response['grandTotal'] = $grand;
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit();
+        }
+
+        // SỬA LẠI: Chuyển hướng an toàn để không bị văng lỗi DefaultController khi mất lịch sử tab trình duyệt
+        if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'NguyenDuongBao_0154') !== false) {
+            $redirectUrl = $_SERVER['HTTP_REFERER'];
+            if (strpos($redirectUrl, '#') === false) {
+                if (strpos($redirectUrl, '/Product/cart') !== false) {
+                    $redirectUrl .= '#cart';
+                } elseif (strpos($redirectUrl, '/Product/list') !== false) {
+                    $redirectUrl .= '#products';
+                }
+            }
+            header("Location: " . $redirectUrl);
+        } else {
+            header('Location: /NguyenDuongBao_0154/Product/list');
+        }
+        exit();
     }
-    // SỬA LẠI: Chuyển hướng an toàn để không bị văng lỗi DefaultController khi mất lịch sử tab trình duyệt
-    if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'NguyenDuongBao_0154') !== false) {
-        header("Location: " . $_SERVER['HTTP_REFERER']);
-    } else {
-        header('Location: /NguyenDuongBao_0154/Product/list');
+
+    public function admin()
+    {
+        SessionHelper::requireAdmin();
+        // Lấy danh sách sản phẩm từ Model
+        $products = $this->productModel->getProducts();
+
+        // Gọi ra file view admin riêng biệt (dạng bảng)
+        include 'app/views/product/admin.php';
+
     }
-    exit();
-}
 }
 ?>

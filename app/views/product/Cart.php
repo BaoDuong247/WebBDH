@@ -1,6 +1,6 @@
 <?php require './app/views/shares/header.php'; ?>
 
-<section style="padding: 60px 20px; max-width: 1000px; margin: 0 auto; min-height: 600px; box-sizing: border-box; color: #fff;">
+<section id="cart" style="padding: 60px 20px; max-width: 1000px; margin: 0 auto; min-height: 600px; box-sizing: border-box; color: #fff;">
     
     <h1 style="font-size: 28px; font-weight: bold; color: #dfb76c; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 30px;">
         🛒 Giỏ Hàng Của Bạn
@@ -40,17 +40,17 @@
                                 <?php echo htmlspecialchars($item['name']); ?>
                             </td>
                             <td style="padding: 15px; color: #ccc;">
-                                <?php echo number_format($item['price'], 0, ',', '.'); ?> Đ
+                                $<?php echo number_format($item['price'], 0, ',', '.'); ?>
                             </td>
                             <td style="padding: 15px; text-align: center;">
                                 <div style="display: inline-flex; align-items: center; gap: 10px; background: #2a2a2a; padding: 4px 10px; border-radius: 4px;">
-                                    <a href="/NguyenDuongBao_0154/Product/updateCartQuantity/<?php echo $id; ?>/decrease" style="color: #dfb76c; text-decoration: none; font-weight: bold;">-</a>
+                                    <a class="scroll-btn" href="/NguyenDuongBao_0154/Product/updateCartQuantity/<?php echo $id; ?>/decrease" style="color: #dfb76c; text-decoration: none; font-weight: bold;">-</a>
                                     <span style="font-weight: bold; min-width: 20px; display: inline-block;"><?php echo $item['quantity']; ?></span>
-                                    <a href="/NguyenDuongBao_0154/Product/updateCartQuantity/<?php echo $id; ?>/increase" style="color: #dfb76c; text-decoration: none; font-weight: bold;">+</a>
+                                    <a class="scroll-btn" href="/NguyenDuongBao_0154/Product/updateCartQuantity/<?php echo $id; ?>/increase" style="color: #dfb76c; text-decoration: none; font-weight: bold;">+</a>
                                 </div>
                             </td>
                             <td style="padding: 15px; text-align: right; color: #dfb76c; font-weight: bold;">
-                                <?php echo number_format($totalPrice, 0, ',', '.'); ?> Đ
+                                $<?php echo number_format($totalPrice, 0, ',', '.'); ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -60,7 +60,7 @@
             <!-- Tổng đơn hàng & Nút hành động -->
             <div style="padding: 25px; display: flex; justify-content: space-between; align-items: center; background: #222; border-top: 1px solid #333; flex-wrap: wrap; gap: 15px;">
                 <div style="font-size: 18px;">
-                    Tổng thanh toán: <span style="color: #dfb76c; font-size: 24px; font-weight: bold; margin-left: 10px;"><?php echo number_format($grandTotal, 0, ',', '.'); ?> VNĐ</span>
+                    Tổng thanh toán: <span style="color: #dfb76c; font-size: 24px; font-weight: bold; margin-left: 10px;">$<?php echo number_format($grandTotal, 0, ',', '.'); ?></span>
                 </div>
                 <div style="display: flex; gap: 12px;">
                     <a href="/NguyenDuongBao_0154/Product/list" style="border: 1px solid #dfb76c; color: #dfb76c; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: bold;">
@@ -83,5 +83,20 @@
     <?php endif; ?>
 
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('cartPageScroll')) {
+        window.scrollTo(0, parseInt(localStorage.getItem('cartPageScroll'), 10));
+        localStorage.removeItem('cartPageScroll');
+    }
+    var scrollButtons = document.querySelectorAll('.scroll-btn');
+    scrollButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            localStorage.setItem('cartPageScroll', window.scrollY);
+        });
+    });
+});
+</script>
 
 <?php require './app/views/shares/footer.php'; ?>
