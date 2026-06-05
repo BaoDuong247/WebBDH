@@ -21,6 +21,16 @@
         </div>
 
         <div style="margin-bottom: 18px;">
+            <label style="display: block; margin-bottom: 8px; color: #aaa; font-size: 14px;">Số điện thoại</label>
+            <input type="text" name="phone" value="<?php echo htmlspecialchars($phone ?? ''); ?>" style="width: 100%; padding: 11px; background: #222; border: 1px solid #444; border-radius: 4px; color: #fff; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 18px;">
+            <label style="display: block; margin-bottom: 8px; color: #aaa; font-size: 14px;">Địa chỉ</label>
+            <input type="text" name="address" value="<?php echo htmlspecialchars($address ?? ''); ?>" style="width: 100%; padding: 11px; background: #222; border: 1px solid #444; border-radius: 4px; color: #fff; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 18px;">
             <label style="display: block; margin-bottom: 8px; color: #aaa; font-size: 14px;">Mật khẩu</label>
             <input type="password" name="password" style="width: 100%; padding: 11px; background: #222; border: 1px solid #444; border-radius: 4px; color: #fff; box-sizing: border-box;">
         </div>

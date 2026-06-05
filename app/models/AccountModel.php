@@ -15,20 +15,24 @@ class AccountModel {
         return $stmt->fetch(PDO::FETCH_OBJ); 
     } 
 
-    public function save($username, $fullName, $password, $role = 'user') { 
+    public function save($username, $fullName, $phone, $address, $password, $role = 'user') { 
         if ($this->getAccountByUsername($username)) { 
             return false; 
         } 
-        $query = "INSERT INTO " . $this->table_name . " SET username=:username, fullname=:fullname, password=:password, role=:role"; 
+        $query = "INSERT INTO " . $this->table_name . " SET username=:username, fullname=:fullname, phone=:phone, address=:address, password=:password, role=:role"; 
         $stmt = $this->conn->prepare($query); 
 
         $username = htmlspecialchars(strip_tags($username)); 
         $fullName = htmlspecialchars(strip_tags($fullName)); 
+        $phone = htmlspecialchars(strip_tags($phone)); 
+        $address = htmlspecialchars(strip_tags($address)); 
         $password = password_hash($password, PASSWORD_BCRYPT); 
         $role = htmlspecialchars(strip_tags($role)); 
 
         $stmt->bindParam(":username", $username); 
         $stmt->bindParam(":fullname", $fullName); 
+        $stmt->bindParam(":phone", $phone); 
+        $stmt->bindParam(":address", $address); 
         $stmt->bindParam(":password", $password); 
         $stmt->bindParam(":role", $role); 
 
