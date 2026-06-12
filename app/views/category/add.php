@@ -8,8 +8,8 @@
 
     </div>
 
-    <form method="POST"
-        action="/NguyenDuongBao_0154/Category/save">
+    <form id="add-category-form"
+        method="POST">
 
         <div class="form-group">
 
@@ -48,3 +48,40 @@
 </div>
 
 <?php require './app/views/shares/footer.php'; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('add-category-form');
+
+    if (!form) return;
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const payload = {
+            name: formData.get('name') || '',
+            description: formData.get('description') || ''
+        };
+
+        fetch('/NguyenDuongBao_0154/api/category', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data && data.message && data.message.toLowerCase().indexOf('success') !== -1) {
+                    window.location.href = '/NguyenDuongBao_0154/Category/list';
+                } else {
+                    alert('Thêm danh mục thất bại.');
+                }
+            })
+            .catch(function () {
+                alert('Không thể thêm danh mục lúc này.');
+            });
+    });
+});
+</script>

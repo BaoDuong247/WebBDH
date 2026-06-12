@@ -15,7 +15,7 @@
 
     <div style="background: #111; border: 1px solid #2d2d2d; border-radius: 12px; padding: 18px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.35);">
         <div style="font-size: 17px; font-weight: bold; color: #dfb76c; margin-bottom: 12px;">➕ Thêm danh mục mới</div>
-        <form method="POST" action="/NguyenDuongBao_0154/Category/save" style="display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 10px; align-items: end;">
+        <form id="category-add-inline-form" method="POST" style="display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 10px; align-items: end;">
             <div>
                 <label style="display: block; color: #fff; font-size: 13px; margin-bottom: 6px;">Tên danh mục</label>
                 <input type="text" name="name" required style="width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid #444; background: #1a1a1a; color: #fff; box-sizing: border-box;">
@@ -56,6 +56,9 @@
                             <td style="padding: 16px 20px; color: #ccc; font-size: 14px; line-height: 1.5; max-width: 400px; word-wrap: break-word;"><?php echo htmlspecialchars($description); ?></td>
                             <td style="padding: 16px 20px; text-align: center;">
                                 <div style="display: flex; gap: 8px; justify-content: center;">
+                                    <a href="/NguyenDuongBao_0154/Category/show/<?php echo $id; ?>" style="background-color: #1f1f1f; color: #dfb76c; border: 1px solid #dfb76c; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s;">
+                                        👁 Xem
+                                    </a>
                                     <a href="/NguyenDuongBao_0154/Category/edit/<?php echo $id; ?>" style="background-color: #333; color: #dfb76c; border: 1px solid #dfb76c; padding: 6px 14px; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s;">
                                         ✏ Sửa
                                     </a>
@@ -89,3 +92,38 @@
 </style>
 
 <?php require './app/views/shares/footer.php'; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const inlineForm = document.getElementById('category-add-inline-form');
+
+    if (inlineForm) {
+        inlineForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(inlineForm);
+            fetch('/NguyenDuongBao_0154/api/category', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: formData.get('name') || '',
+                    description: formData.get('description') || ''
+                })
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (data && data.message && data.message.toLowerCase().indexOf('success') !== -1) {
+                        window.location.reload();
+                    } else {
+                        alert('Thêm danh mục thất bại.');
+                    }
+                })
+                .catch(function () {
+                    alert('Không thể thêm danh mục lúc này.');
+                });
+        });
+    }
+});
+</script>

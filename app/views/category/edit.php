@@ -1,4 +1,9 @@
 <?php require './app/views/shares/header.php'; ?>
+<?php
+$currentCategory = isset($category) && is_object($category)
+    ? $category
+    : (object) ['id' => 0, 'name' => '', 'description' => ''];
+?>
 
 <div class="form-wrapper">
 
@@ -8,12 +13,12 @@
 
     </div>
 
-    <form method="POST"
-        action="/NguyenDuongBao_0154/Category/update">
+    <form id="edit-category-form"
+        method="POST">
 
         <input type="hidden"
             name="id"
-            value="<?php echo $category->id; ?>">
+            value="<?php echo (int)($currentCategory->id ?? 0); ?>">
 
         <div class="form-group">
 
@@ -22,7 +27,7 @@
             <input type="text"
                 name="name"
                 class="form-control"
-                value="<?php echo $category->name; ?>"
+                value="<?php echo htmlspecialchars($currentCategory->name ?? ''); ?>"
                 required>
 
         </div>
@@ -33,7 +38,7 @@
 
             <textarea name="description"
                 class="form-control"
-                rows="5"><?php echo $category->description; ?></textarea>
+                rows="5"><?php echo htmlspecialchars($currentCategory->description ?? ''); ?></textarea>
 
         </div>
 
@@ -59,3 +64,41 @@
 </div>
 
 <?php require './app/views/shares/footer.php'; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('edit-category-form');
+
+    if (!form) return;
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const id = document.querySelector('input[name="id"]').value;
+        const formData = new FormData(form);
+        const payload = {
+            name: formData.get('name') || '',
+            description: formData.get('description') || ''
+        };
+
+        fetch('/NguyenDuongBao_0154/api/category/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data && data.message && data.message.toLowerCase().indexOf('success') !== -1) {
+                    window.location.href = '/NguyenDuongBao_0154/Category/list';
+                } else {
+                    alert('Cập nhật danh mục thất bại.');
+                }
+            })
+            .catch(function () {
+                alert('Không thể cập nhật danh mục lúc này.');
+            });
+    });
+});
+</script>

@@ -54,6 +54,23 @@ class CategoryController
     }
 
     /* =========================
+       SHOW CATEGORY
+    ========================== */
+
+    public function show($id)
+    {
+        SessionHelper::requireAdmin();
+        $category = $this->categoryModel->getCategoryById($id);
+
+        if (!$category) {
+            header('Location: /NguyenDuongBao_0154/Category/list');
+            exit;
+        }
+
+        require './app/views/category/show.php';
+    }
+
+    /* =========================
        EDIT CATEGORY
     ========================== */
 

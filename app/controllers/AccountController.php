@@ -30,6 +30,8 @@ class AccountController {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') { 
             $username = $_POST['username'] ?? ''; 
             $fullName = $_POST['fullname'] ?? ''; 
+            $phone = $_POST['phone'] ?? ''; 
+            $address = $_POST['address'] ?? ''; 
             $password = $_POST['password'] ?? ''; 
             $confirmPassword = $_POST['confirmpassword'] ?? ''; 
             $role = $_POST['role'] ?? 'user'; 
@@ -37,6 +39,8 @@ class AccountController {
             $errors = []; 
             if (empty($username)) $errors['username'] = "Vui lòng nhập username!"; 
             if (empty($fullName)) $errors['fullname'] = "Vui lòng nhập fullname!"; 
+            if (empty($phone)) $errors['phone'] = "Vui lòng nhập số điện thoại!"; 
+            if (empty($address)) $errors['address'] = "Vui lòng nhập địa chỉ!"; 
             if (empty($password)) $errors['password'] = "Vui lòng nhập password!"; 
             if ($password != $confirmPassword) $errors['confirmPass'] = "Mật khẩu và xác nhận chưa khớp!"; 
             if (!in_array($role, ['admin', 'user'])) $role = 'user'; 
@@ -49,7 +53,7 @@ class AccountController {
                 include_once 'app/views/account/register.php'; 
                 return;
             } else { 
-                $result = $this->accountModel->save($username, $fullName, $password, $role); 
+                $result = $this->accountModel->save($username, $fullName, $phone, $address, $password, $role); 
                 if ($result) {
                     echo "<script>alert('Đăng ký thành công!'); window.location.href='/NguyenDuongBao_0154/Account/login';</script>";
                     exit;
